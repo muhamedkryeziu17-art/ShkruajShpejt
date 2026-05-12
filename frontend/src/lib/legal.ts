@@ -1,6 +1,6 @@
 const siteUrl = (import.meta.env.VITE_SITE_URL || "https://YOUR_DOMAIN.com").trim().replace(/\/+$/, "");
 
-export const supportEmail = (import.meta.env.VITE_SUPPORT_EMAIL || "support@YOUR_DOMAIN.com").trim();
+export const supportEmail = (import.meta.env.VITE_SUPPORT_EMAIL || "muhamedkryeziu02@gmail.com").trim();
 
 export const legalUrls = {
   base: siteUrl,

@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { FeatureGate } from "./components/FeatureGate";
+import { AboutPage } from "./pages/AboutPage";
 import { BigramsPage } from "./pages/BigramsPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LandingPage } from "./pages/LandingPage";
@@ -31,6 +32,7 @@ export function App() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/settings/billing" element={<BillingPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/refund" element={<RefundPage />} />

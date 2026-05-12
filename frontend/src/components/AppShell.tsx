@@ -12,7 +12,8 @@ const navItems = [
   { to: "/weak-keys", label: "Tastet e Dobeta" },
   { to: "/bigrams", label: "Cifte" },
   { to: "/stats", label: "Statistika" },
-  { to: "/pricing", label: "Cmimet" }
+  { to: "/pricing", label: "Cmimet" },
+  { to: "/about", label: "About" }
 ];
 
 export function AppShell() {
