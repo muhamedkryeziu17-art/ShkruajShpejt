@@ -26,7 +26,9 @@ Official docs:
 frontend
 ```
 
-Recommended setup is Root Directory `frontend`. If you already imported the repository with Root Directory as the project root, the root `vercel.json` can also build the frontend by using:
+Recommended setup is Root Directory `frontend`. Do not combine Root Directory `frontend` with `--prefix frontend`; that makes Vercel look for `frontend/frontend/package.json`.
+
+If you already imported the repository with Root Directory as the project root, either change Root Directory to `frontend`, or use these root-level commands:
 
 ```text
 Install Command: npm install --prefix frontend
