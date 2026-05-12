@@ -1,0 +1,11 @@
+create index if not exists idx_typing_tests_user_created on public.typing_tests(user_id, created_at desc);
+create index if not exists idx_typing_tests_user_category_created on public.typing_tests(user_id, category, created_at desc);
+create index if not exists idx_lesson_progress_user on public.lesson_progress(user_id);
+create index if not exists idx_lesson_progress_user_lesson on public.lesson_progress(user_id, lesson_id);
+create index if not exists idx_lessons_order_index on public.lessons(order_index);
+create index if not exists idx_key_stats_user_key on public.key_stats(user_id, key);
+create index if not exists idx_key_stats_user_error on public.key_stats(user_id, error_count desc);
+create index if not exists idx_daily_stats_user_date on public.daily_stats(user_id, date desc);
+create index if not exists idx_subscriptions_user_status on public.subscriptions(user_id, status);
+create index if not exists idx_subscriptions_provider_subscription on public.subscriptions(provider, provider_subscription_id);
+create index if not exists idx_payment_events_provider_created on public.payment_events(provider, created_at desc);

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+bin/
+obj/
+.codex/
+.vs/
+.vscode/
+.env
+.env.local
+*.user
+*.suo
+*.lnk
+TestResults/
+coverage/
