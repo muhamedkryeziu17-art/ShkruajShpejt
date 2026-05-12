@@ -638,12 +638,12 @@ static async Task<BillingStatusDto> LoadBillingStatus(NpgsqlConnection db, Guid 
     var row = await db.QuerySingleOrDefaultAsync<SubscriptionRow>(
         """
         select
-          plan,
-          status,
-          current_period_start,
-          current_period_end,
-          cancel_at_period_end,
-          lifetime
+          plan as "Plan",
+          status as "Status",
+          current_period_start as "CurrentPeriodStart",
+          current_period_end as "CurrentPeriodEnd",
+          cancel_at_period_end as "CancelAtPeriodEnd",
+          lifetime as "Lifetime"
         from public.subscriptions
         where user_id = @UserId
         order by
