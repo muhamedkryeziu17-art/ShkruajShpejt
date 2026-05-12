@@ -36,6 +36,8 @@ Build Command: npm run build --prefix frontend
 Output Directory: frontend/dist
 ```
 
+If Vercel does not let you change the old settings and the project still has Root Directory `frontend` plus `--prefix frontend`, the compatibility wrapper in `frontend/frontend` redirects the build to the real app and copies the final files to the output path Vercel expects.
+
 ## C) Vercel Build Settings
 
 Use these settings:
