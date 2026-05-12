@@ -134,6 +134,11 @@ app.UseExceptionHandler(exceptionApp =>
         var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
         if (exception is not null)
         {
+            context.RequestServices
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger("UnhandledApiError")
+                .LogError(exception, "Unhandled API error for {Method} {Path}", context.Request.Method, context.Request.Path);
+
             await WriteRuntimeError(exception);
         }
 
