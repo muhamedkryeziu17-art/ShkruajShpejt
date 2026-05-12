@@ -1368,13 +1368,15 @@ internal sealed record TodayStatsRow(
 
 internal sealed record LessonRequirementRow(decimal RequiredAccuracy, decimal RequiredWpm);
 
-internal sealed record SubscriptionRow(
-    string Plan,
-    string Status,
-    DateTimeOffset? CurrentPeriodStart,
-    DateTimeOffset? CurrentPeriodEnd,
-    bool CancelAtPeriodEnd,
-    bool Lifetime);
+internal sealed class SubscriptionRow
+{
+    public string Plan { get; set; } = BillingPlans.Free;
+    public string Status { get; set; } = "free";
+    public DateTimeOffset? CurrentPeriodStart { get; set; }
+    public DateTimeOffset? CurrentPeriodEnd { get; set; }
+    public bool CancelAtPeriodEnd { get; set; }
+    public bool Lifetime { get; set; }
+}
 
 internal sealed class LessonRow
 {
