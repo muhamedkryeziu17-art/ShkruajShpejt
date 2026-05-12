@@ -6,7 +6,8 @@ ShkruajShpejt now has a freemium + Pro billing layer. Payments are intentionally
 
 1. Paddle - recommended first for global SaaS because it can act as merchant of record and supports checkout, subscriptions, taxes, and webhooks.
 2. Lemon Squeezy - second option with simple hosted checkout and webhooks.
-3. Manual activation - fallback for bank transfer, school deals, or early Pro users.
+3. Paysera manual - best current fallback for Paysera or bank transfer in unsupported markets.
+4. Manual activation - fallback for school deals or early Pro users.
 
 Do not put payment secrets in the frontend.
 
@@ -49,6 +50,7 @@ LEMONSQUEEZY_VARIANT_LIFETIME=
 paddle
 lemonsqueezy
 manual
+paysera_manual
 ```
 
 ## Frontend Env
@@ -61,6 +63,20 @@ VITE_API_BASE_URL=https://YOUR_BACKEND_URL.com
 ```
 
 Keep `VITE_ENABLE_PAYMENTS=false` until checkout and webhooks have been tested.
+
+For Paysera manual transfer, use:
+
+```text
+VITE_ENABLE_PAYMENTS=false
+VITE_PAYMENT_PROVIDER=paysera_manual
+VITE_MANUAL_PAYMENT_PAYEE_NAME=
+VITE_MANUAL_PAYMENT_PAYSERA_EMAIL=
+VITE_MANUAL_PAYMENT_IBAN=
+VITE_MANUAL_PAYMENT_BANK_NAME=Paysera
+VITE_SUPPORT_EMAIL=
+```
+
+See `PAYSERA_MANUAL_SETUP.md` for the exact manual flow.
 
 ## Database Setup
 

@@ -1,12 +1,19 @@
-import { Check, GraduationCap, Sparkles } from "lucide-react";
+import { Check, Copy, GraduationCap, Landmark, Mail, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, ButtonLink } from "../components/Button";
 import { Card, SectionHeader } from "../components/Card";
 import { PageFrame } from "../components/PageFrame";
 import { apiRequest } from "../lib/api";
-import { billingPlans, schoolPlans, type BillingPlan } from "../lib/billingPlans";
+import { billingPlans, getPlanLabel, schoolPlans, type BillingPlan } from "../lib/billingPlans";
 import { mailTo } from "../lib/legal";
+import {
+  manualPaymentDetails,
+  manualPaymentPrices,
+  manualPaymentReference,
+  manualPaymentSubject,
+  manualPaymentsEnabled
+} from "../lib/manualPayments";
 import { useAuth } from "../state/AuthProvider";
 
 const paymentsEnabled = import.meta.env.VITE_ENABLE_PAYMENTS === "true";
@@ -16,9 +23,26 @@ export function PricingPage() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [loadingPlan, setLoadingPlan] = useState<BillingPlan | "">("");
+  const [manualPlan, setManualPlan] = useState<BillingPlan | null>(null);
+
+  const manualReference = manualPlan ? manualPaymentReference(session?.user.id, manualPlan) : "";
+  const manualAmount = manualPlan ? manualPaymentPrices[manualPlan].toFixed(2) : "0.00";
+  const manualEmailSubject = manualPlan ? manualPaymentSubject(manualPlan, manualReference) : "Pagesa ShkruajShpejt";
+  const manualEmailBody = manualPlan
+    ? [
+        `Plani: ${getPlanLabel(manualPlan)}`,
+        `Shuma: ${manualAmount} ${manualPaymentDetails.currency}`,
+        `Referenca: ${manualReference}`,
+        `Email llogarie: ${session?.user.email ?? ""}`,
+        "",
+        "Kam kryer pagesen manuale dhe dua aktivizim Pro."
+      ].join("\n")
+    : "";
+  const manualMailHref = `mailto:${manualPaymentDetails.supportEmail}?subject=${encodeURIComponent(manualEmailSubject)}&body=${encodeURIComponent(manualEmailBody)}`;
 
   async function startCheckout(plan: BillingPlan) {
     setMessage("");
+    setManualPlan(null);
 
     if (plan === "free") {
       navigate("/test");
@@ -27,6 +51,12 @@ export function PricingPage() {
 
     if (!session) {
       navigate("/login");
+      return;
+    }
+
+    if (manualPaymentsEnabled) {
+      setManualPlan(plan);
+      setMessage("Kryej pagesen manuale me Paysera ose banke, pastaj dergo konfirmimin per aktivizim Pro.");
       return;
     }
 
@@ -50,6 +80,11 @@ export function PricingPage() {
     }
   }
 
+  function copyValue(value: string) {
+    if (!value || !navigator.clipboard) return;
+    void navigator.clipboard.writeText(value);
+  }
+
   return (
     <PageFrame>
       <SectionHeader
@@ -64,6 +99,47 @@ export function PricingPage() {
             Kontakt
           </a>
         </div>
+      ) : null}
+
+      {manualPlan ? (
+        <Card className="mb-8 border-emerald-400/60">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="rounded-2xl bg-emerald-500/10 p-3 text-emerald-600 dark:text-emerald-200">
+                  <Landmark className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-bold uppercase text-slate-500 dark:text-slate-300">Pagesa manuale Paysera</p>
+                  <h2 className="text-2xl font-black text-slate-950 dark:text-white">{getPlanLabel(manualPlan)}</h2>
+                </div>
+              </div>
+              <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+                Dergo pagesen me Paysera ose transfer bankar. Shkruaj referencen sakte, pastaj dergo konfirmimin ne email. Qasja Pro aktivizohet pasi pagesa te verifikohet.
+              </p>
+            </div>
+            <a
+              href={manualMailHref}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-ink px-4 text-sm font-semibold text-white shadow-glow transition hover:-translate-y-0.5 dark:bg-white dark:text-ink"
+            >
+              <Mail className="h-4 w-4" />
+              Dergo konfirmimin
+            </a>
+          </div>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            <ManualInfo label="Shuma" value={`${manualAmount} ${manualPaymentDetails.currency}`} onCopy={copyValue} />
+            <ManualInfo label="Referenca" value={manualReference} onCopy={copyValue} />
+            <ManualInfo label="Perfituesi" value={manualPaymentDetails.payeeName} onCopy={copyValue} />
+            <ManualInfo label="Banka" value={manualPaymentDetails.bankName} onCopy={copyValue} />
+            <ManualInfo label="Paysera email" value={manualPaymentDetails.payseraEmail || "Vendose ne Vercel env"} onCopy={copyValue} />
+            <ManualInfo label="IBAN" value={manualPaymentDetails.iban || "Vendose ne Vercel env"} onCopy={copyValue} />
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-slate-200/70 bg-white/60 p-4 text-sm leading-6 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
+            Hapat: paguaj shumen, vendos referencen, dergo screenshot ose konfirmim ne email. Admini aktivizon planin ne Supabase pas kontrollit.
+          </div>
+        </Card>
       ) : null}
 
       <div className="grid gap-5 lg:grid-cols-4">
@@ -133,5 +209,19 @@ export function PricingPage() {
         </div>
       </div>
     </PageFrame>
+  );
+}
+
+function ManualInfo({ label, value, onCopy }: { label: string; value: string; onCopy: (value: string) => void }) {
+  return (
+    <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
+      <p className="text-xs font-black uppercase text-slate-500 dark:text-slate-400">{label}</p>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="break-all text-sm font-bold text-slate-950 dark:text-white">{value}</p>
+        <Button type="button" variant="ghost" size="sm" onClick={() => onCopy(value)} icon={<Copy className="h-4 w-4" />}>
+          Kopjo
+        </Button>
+      </div>
+    </div>
   );
 }
