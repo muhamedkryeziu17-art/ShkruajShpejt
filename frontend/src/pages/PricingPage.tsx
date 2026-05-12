@@ -38,7 +38,7 @@ export function PricingPage() {
         "Kam kryer pagesen manuale dhe dua aktivizim Pro."
       ].join("\n")
     : "";
-  const manualMailHref = `mailto:${manualPaymentDetails.supportEmail}?subject=${encodeURIComponent(manualEmailSubject)}&body=${encodeURIComponent(manualEmailBody)}`;
+  const manualMailHref = mailTo(manualEmailSubject, manualEmailBody);
 
   async function startCheckout(plan: BillingPlan) {
     setMessage("");
@@ -95,7 +95,7 @@ export function PricingPage() {
       {message ? (
         <div className="mb-5 rounded-2xl border border-amber-300/70 bg-amber-50 p-4 text-sm font-semibold text-amber-800 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200">
           {message}
-          <a href={mailTo("Qasje Pro ShkruajShpejt")} className="ml-2 underline">
+          <a href={mailTo("Qasje Pro ShkruajShpejt")} target="_blank" rel="noreferrer" className="ml-2 underline">
             Kontakt
           </a>
         </div>
@@ -120,6 +120,8 @@ export function PricingPage() {
             </div>
             <a
               href={manualMailHref}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-ink px-4 text-sm font-semibold text-white shadow-glow transition hover:-translate-y-0.5 dark:bg-white dark:text-ink"
             >
               <Mail className="h-4 w-4" />

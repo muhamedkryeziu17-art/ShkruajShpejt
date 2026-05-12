@@ -64,6 +64,8 @@ export function BillingPage() {
             </Button>
             <a
               href={mailTo("Billing ShkruajShpejt")}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-slate-300/70 bg-white/80 px-4 text-sm font-semibold text-slate-900 shadow-soft transition hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/10 dark:text-white"
             >
               <Mail className="h-4 w-4" />

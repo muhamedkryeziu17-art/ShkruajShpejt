@@ -11,6 +11,20 @@ export const legalUrls = {
   deleteAccount: `${siteUrl}/delete-account`
 };
 
-export function mailTo(subject: string) {
-  return `mailto:${supportEmail}?subject=${encodeURIComponent(subject)}`;
+export function mailTo(subject = "", body = "") {
+  const params = new URLSearchParams({
+    view: "cm",
+    fs: "1",
+    to: supportEmail
+  });
+
+  if (subject) {
+    params.set("su", subject);
+  }
+
+  if (body) {
+    params.set("body", body);
+  }
+
+  return `https://mail.google.com/mail/?${params.toString()}`;
 }

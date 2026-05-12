@@ -213,13 +213,20 @@ export function ContactPage() {
               <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
                 Nuk ka forme kontakti ne backend per momentin. Perdore email-in me poshte.
               </p>
-              <a className="mt-3 inline-flex font-bold text-cyan-700 dark:text-cyan-200" href={mailTo("Support ShkruajShpejt")}>
+              <a
+                className="mt-3 inline-flex font-bold text-cyan-700 dark:text-cyan-200"
+                href={mailTo("Support ShkruajShpejt")}
+                target="_blank"
+                rel="noreferrer"
+              >
                 {supportEmail}
               </a>
             </div>
           </div>
           <a
             href={mailTo("Support ShkruajShpejt")}
+            target="_blank"
+            rel="noreferrer"
             className="inline-flex h-11 items-center justify-center rounded-2xl bg-ink px-4 text-sm font-semibold text-white shadow-glow transition hover:-translate-y-0.5 dark:bg-white dark:text-ink"
           >
             Hap email
@@ -280,6 +287,8 @@ function LegalLayout({
           {actionHref ? (
             <a
               href={actionHref}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex h-11 items-center justify-center rounded-2xl bg-ink px-4 text-sm font-semibold text-white shadow-glow transition hover:-translate-y-0.5 dark:bg-white dark:text-ink"
             >
               {actionLabel}

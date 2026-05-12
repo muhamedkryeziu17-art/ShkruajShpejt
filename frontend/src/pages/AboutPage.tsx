@@ -62,7 +62,12 @@ export function AboutPage() {
               <div>
                 <p className="text-sm font-bold uppercase text-slate-500 dark:text-slate-300">Support</p>
                 <h2 className="mt-1 text-xl font-black text-slate-950 dark:text-white">Na kontakto</h2>
-                <a className="mt-3 inline-flex break-all text-sm font-black text-cyan-700 dark:text-cyan-200" href={mailTo("Support ShkruajShpejt")}>
+                <a
+                  className="mt-3 inline-flex break-all text-sm font-black text-cyan-700 dark:text-cyan-200"
+                  href={mailTo("Support ShkruajShpejt")}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {supportEmail}
                 </a>
               </div>
