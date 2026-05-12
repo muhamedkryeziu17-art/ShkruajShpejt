@@ -15,11 +15,13 @@ import {
   manualPaymentsEnabled
 } from "../lib/manualPayments";
 import { useAuth } from "../state/AuthProvider";
+import { useBilling } from "../state/BillingProvider";
 
 const paymentsEnabled = import.meta.env.VITE_ENABLE_PAYMENTS === "true";
 
 export function PricingPage() {
   const { session } = useAuth();
+  const { billing, loading: billingLoading } = useBilling();
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [loadingPlan, setLoadingPlan] = useState<BillingPlan | "">("");
@@ -39,6 +41,9 @@ export function PricingPage() {
       ].join("\n")
     : "";
   const manualMailHref = mailTo(manualEmailSubject, manualEmailBody);
+  const activePlanLabel = getPlanLabel(billing.plan);
+  const activeStatusLabel = billing.status === "active" ? "Aktiv" : billing.status === "free" ? "Falas" : billing.status;
+  const hasLifetime = Boolean(session && billing.isPro && billing.lifetime);
 
   async function startCheckout(plan: BillingPlan) {
     setMessage("");
@@ -91,6 +96,20 @@ export function PricingPage() {
         title="Cmimet"
         description="Zgjidh planin qe i pershtatet ushtrimit tend. Fillo falas dhe perditeso kur te duhen analiza me te thella."
       />
+
+      {session ? (
+        <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-emerald-300/60 bg-emerald-50/80 p-4 text-sm font-semibold text-emerald-900 shadow-soft dark:border-emerald-300/20 dark:bg-emerald-400/10 dark:text-emerald-100 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-normal text-emerald-700 dark:text-emerald-200">Plani aktual</p>
+            <p className="mt-1">
+              {billingLoading ? "Duke ngarkuar planin..." : `${activePlanLabel} - ${activeStatusLabel}`}
+            </p>
+          </div>
+          <ButtonLink to="/settings/billing" variant="secondary" size="sm">
+            Shiko pagesat
+          </ButtonLink>
+        </div>
+      ) : null}
 
       {message ? (
         <div className="mb-5 rounded-2xl border border-amber-300/70 bg-amber-50 p-4 text-sm font-semibold text-amber-800 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200">
@@ -145,14 +164,44 @@ export function PricingPage() {
       ) : null}
 
       <div className="grid gap-5 lg:grid-cols-4">
-        {billingPlans.map((plan) => (
-          <Card key={plan.id} className={plan.highlighted ? "relative border-cyan-400/70 shadow-glow" : "relative"}>
-            {plan.highlighted ? (
+        {billingPlans.map((plan) => {
+          const isCurrentPlan = Boolean(session && billing.plan === plan.id && (plan.id === "free" || billing.isPro));
+          const coveredByLifetime = hasLifetime && plan.id !== "free" && plan.id !== "lifetime";
+          const disablePlan = loadingPlan === plan.id || isCurrentPlan || coveredByLifetime;
+          const buttonLabel = isCurrentPlan
+            ? "Plani yt aktual"
+            : coveredByLifetime
+              ? "I perfshire"
+              : loadingPlan === plan.id
+                ? "Duke hapur..."
+                : plan.cta;
+
+          return (
+          <Card
+            key={plan.id}
+            className={[
+              "relative",
+              isCurrentPlan ? "border-emerald-400/80 shadow-glow" : plan.highlighted ? "border-cyan-400/70 shadow-glow" : ""
+            ].join(" ")}
+          >
+            {isCurrentPlan ? (
+              <span className="absolute left-4 top-4 rounded-full bg-emerald-400 px-3 py-1 text-xs font-black text-ink">Aktual</span>
+            ) : null}
+            {plan.highlighted && !isCurrentPlan ? (
               <span className="absolute right-4 top-4 rounded-full bg-cyan-400 px-3 py-1 text-xs font-black text-ink">Me i miri</span>
             ) : null}
             <div className="flex min-h-[22rem] flex-col">
-              <h2 className="text-xl font-black text-slate-950 dark:text-white">{plan.label}</h2>
+              <h2 className={["text-xl font-black text-slate-950 dark:text-white", isCurrentPlan ? "mt-8" : ""].join(" ")}>{plan.label}</h2>
               <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{plan.description}</p>
+              {isCurrentPlan ? (
+                <p className="mt-3 rounded-2xl bg-emerald-500/10 px-3 py-2 text-sm font-black text-emerald-700 dark:text-emerald-200">
+                  Ky eshte plani yt aktiv.
+                </p>
+              ) : coveredByLifetime ? (
+                <p className="mt-3 rounded-2xl bg-cyan-500/10 px-3 py-2 text-sm font-black text-cyan-700 dark:text-cyan-200">
+                  I perfshire me Lifetime.
+                </p>
+              ) : null}
               <div className="mt-5">
                 <span className="text-3xl font-black text-slate-950 dark:text-white">{plan.price}</span>
                 <span className="ml-2 text-sm font-semibold text-slate-500 dark:text-slate-300">{plan.cadence}</span>
@@ -170,14 +219,15 @@ export function PricingPage() {
                 className="mt-auto"
                 variant={plan.highlighted ? "primary" : "secondary"}
                 onClick={() => startCheckout(plan.id)}
-                disabled={loadingPlan === plan.id}
-                icon={plan.id === "free" ? undefined : <Sparkles className="h-4 w-4" />}
+                disabled={disablePlan}
+                icon={isCurrentPlan ? <Check className="h-4 w-4" /> : plan.id === "free" ? undefined : <Sparkles className="h-4 w-4" />}
               >
-                {loadingPlan === plan.id ? "Duke hapur..." : plan.cta}
+                {buttonLabel}
               </Button>
             </div>
           </Card>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-8">
