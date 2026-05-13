@@ -2,12 +2,6 @@ import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { hasSupabaseConfig, supabase } from "../lib/supabase";
 
-function siteUrl() {
-  const envUrl = import.meta.env.VITE_SITE_URL?.trim();
-  const fallbackUrl = window.location.origin;
-  return (envUrl || fallbackUrl).replace(/\/+$/, "");
-}
-
 type AuthContextValue = {
   session: Session | null;
   user: User | null;
@@ -51,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${siteUrl()}/dashboard`
+        redirectTo: `${window.location.origin.replace(/\/+$/, "")}/dashboard`
       }
     });
 
