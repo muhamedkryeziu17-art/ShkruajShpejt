@@ -5,9 +5,18 @@ create table if not exists public.profiles (
   email text,
   full_name text,
   avatar_url text,
+  terms_accepted_at timestamptz,
+  terms_version text,
+  privacy_accepted_at timestamptz,
+  privacy_version text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles add column if not exists terms_accepted_at timestamptz;
+alter table public.profiles add column if not exists terms_version text;
+alter table public.profiles add column if not exists privacy_accepted_at timestamptz;
+alter table public.profiles add column if not exists privacy_version text;
 
 create table if not exists public.typing_tests (
   id uuid primary key default gen_random_uuid(),

@@ -84,3 +84,15 @@ export type WeakKey = {
   errorCount: number;
   errorRate: number;
 };
+
+export type LegalProfile = {
+  id: string;
+  email: string | null;
+  fullName: string | null;
+  avatarUrl: string | null;
+  termsAcceptedAt: string | null;
+  termsVersion: string | null;
+  privacyAcceptedAt: string | null;
+  privacyVersion: string | null;
+  mustAcceptTerms: boolean;
+};

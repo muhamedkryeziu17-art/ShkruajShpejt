@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import { AuthProvider } from "./state/AuthProvider";
 import { BillingProvider } from "./state/BillingProvider";
+import { LegalAcceptanceProvider } from "./state/LegalAcceptanceProvider";
 import { ThemeProvider } from "./state/ThemeProvider";
 import "./styles.css";
 
@@ -12,9 +13,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <BillingProvider>
-            <App />
-          </BillingProvider>
+          <LegalAcceptanceProvider>
+            <BillingProvider>
+              <App />
+            </BillingProvider>
+          </LegalAcceptanceProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

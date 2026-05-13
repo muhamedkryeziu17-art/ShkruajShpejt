@@ -5,8 +5,15 @@ public sealed record ProfileDto(
     string? Email,
     string? FullName,
     string? AvatarUrl,
+    DateTimeOffset? TermsAcceptedAt,
+    string? TermsVersion,
+    DateTimeOffset? PrivacyAcceptedAt,
+    string? PrivacyVersion,
+    bool MustAcceptTerms,
     DateTime CreatedAt,
     DateTime UpdatedAt);
+
+public sealed record AcceptLegalRequest(string TermsVersion, string PrivacyVersion);
 
 public sealed record SpeedPointDto(int Second, decimal Wpm, decimal Accuracy);
 

@@ -1,8 +1,10 @@
 import { LogIn, Menu, UserCircle, X } from "lucide-react";
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../state/AuthProvider";
+import { useLegalAcceptance } from "../state/LegalAcceptanceProvider";
 import { ButtonLink } from "./Button";
+import { isPublicLegalPath, TermsAcceptanceGate } from "./TermsAcceptanceGate";
 import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
@@ -18,7 +20,14 @@ const navItems = [
 
 export function AppShell() {
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
+  const { session, user } = useAuth();
+  const { loading: legalLoading, error: legalError, mustAcceptTerms } = useLegalAcceptance();
+  const location = useLocation();
+  const holdProtectedContent = Boolean(
+    session &&
+    !isPublicLegalPath(location.pathname) &&
+    (legalLoading || legalError || mustAcceptTerms)
+  );
 
   return (
     <div className="min-h-screen text-slate-950 dark:text-white">
@@ -102,7 +111,8 @@ export function AppShell() {
         ) : null}
       </header>
 
-      <Outlet />
+      <TermsAcceptanceGate />
+      {holdProtectedContent ? null : <Outlet />}
     </div>
   );
 }

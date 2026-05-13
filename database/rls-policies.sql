@@ -26,6 +26,9 @@ to authenticated
 using ((select auth.uid()) = id)
 with check ((select auth.uid()) = id);
 
+-- Terms/privacy acceptance is stored on profiles and follows the same owner-only policy.
+-- Users cannot read or update another user's legal acceptance state.
+
 drop policy if exists "typing_tests_select_own" on public.typing_tests;
 create policy "typing_tests_select_own"
 on public.typing_tests for select

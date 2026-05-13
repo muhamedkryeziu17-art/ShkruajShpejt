@@ -1,5 +1,6 @@
 import type { Session } from "@supabase/supabase-js";
-import type { Lesson, ProgressPoint, RecentTest, Summary, TypingResult, WeakKey } from "./types";
+import { TERMS_VERSION, PRIVACY_VERSION } from "../constants/legal";
+import type { LegalProfile, Lesson, ProgressPoint, RecentTest, Summary, TypingResult, WeakKey } from "./types";
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_API_BASE_URL || "").trim().replace(/\/+$/, "");
 
@@ -61,6 +62,21 @@ export function loadLessons(session: Session | null) {
 
 export function loadWeakKeys(session: Session | null) {
   return apiRequest<WeakKey[]>("/api/weak-keys", { session });
+}
+
+export function loadProfile(session: Session | null) {
+  return apiRequest<LegalProfile>("/api/me", { session });
+}
+
+export function acceptLegal(session: Session) {
+  return apiRequest<LegalProfile>("/api/legal/accept", {
+    method: "POST",
+    session,
+    body: JSON.stringify({
+      termsVersion: TERMS_VERSION,
+      privacyVersion: PRIVACY_VERSION
+    })
+  });
 }
 
 export function saveTypingResult(session: Session, result: TypingResult) {

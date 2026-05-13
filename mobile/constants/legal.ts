@@ -1,6 +1,9 @@
 const siteUrl = (process.env.EXPO_PUBLIC_SITE_URL || "https://YOUR_DOMAIN.com").trim().replace(/\/+$/, "");
 
-export const supportEmail = "support@YOUR_DOMAIN.com";
+export const TERMS_VERSION = "2026-05-13";
+export const PRIVACY_VERSION = "2026-05-13";
+
+export const supportEmail = "muhamedkryeziu02@gmail.com";
 
 export const legalUrls = {
   base: siteUrl,

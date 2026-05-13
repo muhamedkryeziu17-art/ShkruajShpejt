@@ -37,6 +37,11 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    window.addEventListener("legal-accepted", refresh);
+    return () => window.removeEventListener("legal-accepted", refresh);
+  }, [refresh]);
+
   const value = useMemo(() => ({ billing, loading, refresh }), [billing, loading, refresh]);
   return <BillingContext.Provider value={value}>{children}</BillingContext.Provider>;
 }

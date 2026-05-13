@@ -151,6 +151,32 @@ app.UseExceptionHandler(exceptionApp =>
 app.UseCors("app");
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    if (!RequiresLegalAcceptanceCheck(context))
+    {
+        await next();
+        return;
+    }
+
+    var userId = TryGetUserId(context.User);
+    if (userId is null)
+    {
+        await next();
+        return;
+    }
+
+    await using var db = await OpenConnection(databaseUrl);
+    await UpsertProfileFromClaims(db, context.User);
+    if (await UserMustAcceptTerms(db, userId.Value))
+    {
+        context.Response.StatusCode = StatusCodes.Status428PreconditionRequired;
+        await context.Response.WriteAsJsonAsync(new { message = "Duhet te pranosh kushtet per te vazhduar" });
+        return;
+    }
+
+    await next();
+});
 
 app.MapGet("/api/health", async () =>
 {
@@ -309,11 +335,32 @@ app.MapGet("/api/me", async (HttpContext context) =>
 
     var profile = await db.QuerySingleOrDefaultAsync<ProfileDto>(
         """
-        select id, email, full_name, avatar_url, created_at, updated_at
+        select
+          id as "Id",
+          email as "Email",
+          full_name as "FullName",
+          avatar_url as "AvatarUrl",
+          terms_accepted_at as "TermsAcceptedAt",
+          terms_version as "TermsVersion",
+          privacy_accepted_at as "PrivacyAcceptedAt",
+          privacy_version as "PrivacyVersion",
+          (
+            terms_accepted_at is null or
+            privacy_accepted_at is null or
+            terms_version is distinct from @CurrentTermsVersion or
+            privacy_version is distinct from @CurrentPrivacyVersion
+          ) as "MustAcceptTerms",
+          created_at as "CreatedAt",
+          updated_at as "UpdatedAt"
         from public.profiles
         where id = @UserId
         """,
-        new { UserId = userId });
+        new
+        {
+            UserId = userId,
+            CurrentTermsVersion = LegalVersions.CurrentTermsVersion,
+            CurrentPrivacyVersion = LegalVersions.CurrentPrivacyVersion
+        });
 
     profile ??= await UpsertProfileFromClaims(db, context.User);
     return Results.Ok(profile);
@@ -323,6 +370,51 @@ app.MapPost("/api/profile/sync", async (HttpContext context) =>
 {
     await using var db = await OpenConnection(databaseUrl);
     var profile = await UpsertProfileFromClaims(db, context.User);
+    return Results.Ok(profile);
+}).RequireAuthorization();
+
+app.MapPost("/api/legal/accept", async (HttpContext context, AcceptLegalRequest request) =>
+{
+    if (!string.Equals(request.TermsVersion, LegalVersions.CurrentTermsVersion, StringComparison.Ordinal) ||
+        !string.Equals(request.PrivacyVersion, LegalVersions.CurrentPrivacyVersion, StringComparison.Ordinal))
+    {
+        return Results.BadRequest(new { message = "Versioni i kushteve nuk eshte aktual. Rifresko faqen dhe provo perseri." });
+    }
+
+    var userId = GetUserId(context.User);
+    await using var db = await OpenConnection(databaseUrl);
+    await UpsertProfileFromClaims(db, context.User);
+
+    var profile = await db.QuerySingleAsync<ProfileDto>(
+        """
+        update public.profiles
+        set
+          terms_accepted_at = now(),
+          terms_version = @TermsVersion,
+          privacy_accepted_at = now(),
+          privacy_version = @PrivacyVersion,
+          updated_at = now()
+        where id = @UserId
+        returning
+          id as "Id",
+          email as "Email",
+          full_name as "FullName",
+          avatar_url as "AvatarUrl",
+          terms_accepted_at as "TermsAcceptedAt",
+          terms_version as "TermsVersion",
+          privacy_accepted_at as "PrivacyAcceptedAt",
+          privacy_version as "PrivacyVersion",
+          false as "MustAcceptTerms",
+          created_at as "CreatedAt",
+          updated_at as "UpdatedAt"
+        """,
+        new
+        {
+            UserId = userId,
+            TermsVersion = LegalVersions.CurrentTermsVersion,
+            PrivacyVersion = LegalVersions.CurrentPrivacyVersion
+        });
+
     return Results.Ok(profile);
 }).RequireAuthorization();
 
@@ -617,6 +709,50 @@ static async Task<NpgsqlConnection> OpenConnection(string? connectionString)
     var connection = new NpgsqlConnection(connectionString);
     await connection.OpenAsync();
     return connection;
+}
+
+static bool RequiresLegalAcceptanceCheck(HttpContext context)
+{
+    if (!HttpMethods.IsGet(context.Request.Method) &&
+        !HttpMethods.IsPost(context.Request.Method) &&
+        !HttpMethods.IsPut(context.Request.Method) &&
+        !HttpMethods.IsPatch(context.Request.Method) &&
+        !HttpMethods.IsDelete(context.Request.Method))
+    {
+        return false;
+    }
+
+    var path = context.Request.Path;
+    if (!path.StartsWithSegments("/api"))
+    {
+        return false;
+    }
+
+    return !path.StartsWithSegments("/api/health") &&
+        !path.StartsWithSegments("/api/auth/debug") &&
+        !path.StartsWithSegments("/api/me") &&
+        !path.StartsWithSegments("/api/profile/sync") &&
+        !path.StartsWithSegments("/api/legal/accept");
+}
+
+static async Task<bool> UserMustAcceptTerms(NpgsqlConnection db, Guid userId)
+{
+    return await db.QuerySingleAsync<bool>(
+        """
+        select
+          terms_accepted_at is null or
+          privacy_accepted_at is null or
+          terms_version is distinct from @CurrentTermsVersion or
+          privacy_version is distinct from @CurrentPrivacyVersion
+        from public.profiles
+        where id = @UserId
+        """,
+        new
+        {
+            UserId = userId,
+            CurrentTermsVersion = LegalVersions.CurrentTermsVersion,
+            CurrentPrivacyVersion = LegalVersions.CurrentPrivacyVersion
+        });
 }
 
 static async Task<bool> CheckDatabaseReachable(string? connectionString)
@@ -1008,14 +1144,32 @@ static async Task<ProfileDto> UpsertProfileFromClaims(NpgsqlConnection db, Claim
           full_name = excluded.full_name,
           avatar_url = excluded.avatar_url,
           updated_at = now()
-        returning id, email, full_name, avatar_url, created_at, updated_at
+        returning
+          id as "Id",
+          email as "Email",
+          full_name as "FullName",
+          avatar_url as "AvatarUrl",
+          terms_accepted_at as "TermsAcceptedAt",
+          terms_version as "TermsVersion",
+          privacy_accepted_at as "PrivacyAcceptedAt",
+          privacy_version as "PrivacyVersion",
+          (
+            terms_accepted_at is null or
+            privacy_accepted_at is null or
+            terms_version is distinct from @CurrentTermsVersion or
+            privacy_version is distinct from @CurrentPrivacyVersion
+          ) as "MustAcceptTerms",
+          created_at as "CreatedAt",
+          updated_at as "UpdatedAt"
         """,
         new
         {
             UserId = userId,
             Email = email,
             FullName = fullName,
-            AvatarUrl = avatarUrl
+            AvatarUrl = avatarUrl,
+            CurrentTermsVersion = LegalVersions.CurrentTermsVersion,
+            CurrentPrivacyVersion = LegalVersions.CurrentPrivacyVersion
         });
 }
 

@@ -1,6 +1,8 @@
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { TermsAcceptanceGate } from "../components/terms-acceptance-gate";
 import { AuthProvider } from "../hooks/use-auth";
+import { LegalAcceptanceProvider } from "../hooks/use-legal-acceptance";
 import { SettingsProvider, useTheme } from "../hooks/use-theme";
 import { TestResultProvider } from "../hooks/use-test-result";
 
@@ -9,9 +11,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SettingsProvider>
         <AuthProvider>
-          <TestResultProvider>
-            <RootStack />
-          </TestResultProvider>
+          <LegalAcceptanceProvider>
+            <TestResultProvider>
+              <RootStack />
+              <TermsAcceptanceGate />
+            </TestResultProvider>
+          </LegalAcceptanceProvider>
         </AuthProvider>
       </SettingsProvider>
     </GestureHandlerRootView>
