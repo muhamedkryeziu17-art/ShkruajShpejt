@@ -1,17 +1,19 @@
 namespace ShkruajShpejt.Api;
 
-public sealed record ProfileDto(
-    Guid Id,
-    string? Email,
-    string? FullName,
-    string? AvatarUrl,
-    DateTimeOffset? TermsAcceptedAt,
-    string? TermsVersion,
-    DateTimeOffset? PrivacyAcceptedAt,
-    string? PrivacyVersion,
-    bool MustAcceptTerms,
-    DateTime CreatedAt,
-    DateTime UpdatedAt);
+public sealed class ProfileDto
+{
+    public Guid Id { get; set; }
+    public string? Email { get; set; }
+    public string? FullName { get; set; }
+    public string? AvatarUrl { get; set; }
+    public DateTimeOffset? TermsAcceptedAt { get; set; }
+    public string? TermsVersion { get; set; }
+    public DateTimeOffset? PrivacyAcceptedAt { get; set; }
+    public string? PrivacyVersion { get; set; }
+    public bool MustAcceptTerms { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+}
 
 public sealed record AcceptLegalRequest(string TermsVersion, string PrivacyVersion);
 
