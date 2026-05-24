@@ -1,7 +1,10 @@
 const browserSiteUrl = typeof window === "undefined" ? "" : window.location.origin;
 const siteUrl = (import.meta.env.VITE_SITE_URL || browserSiteUrl).trim().replace(/\/+$/, "");
 
-export const supportEmail = (import.meta.env.VITE_SUPPORT_EMAIL || "shkruajshpejt@gmail.com").trim();
+const currentSupportEmail = (import.meta.env.VITE_SUPPORT_EMAIL || "shkruajshpejt@gmail.com").trim();
+const previousSupportEmail = ["muhamedkryeziu02", "gmail.com"].join("@");
+
+export const supportEmail = currentSupportEmail === previousSupportEmail ? "shkruajshpejt@gmail.com" : currentSupportEmail;
 
 export const legalUrls = {
   base: siteUrl,

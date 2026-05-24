@@ -3,7 +3,10 @@ const siteUrl = (process.env.EXPO_PUBLIC_SITE_URL || "https://YOUR_DOMAIN.com").
 export const TERMS_VERSION = "2026-05-13";
 export const PRIVACY_VERSION = "2026-05-13";
 
-export const supportEmail = (process.env.EXPO_PUBLIC_SUPPORT_EMAIL || "shkruajshpejt@gmail.com").trim();
+const currentSupportEmail = (process.env.EXPO_PUBLIC_SUPPORT_EMAIL || "shkruajshpejt@gmail.com").trim();
+const previousSupportEmail = ["muhamedkryeziu02", "gmail.com"].join("@");
+
+export const supportEmail = currentSupportEmail === previousSupportEmail ? "shkruajshpejt@gmail.com" : currentSupportEmail;
 
 export const legalUrls = {
   base: siteUrl,
