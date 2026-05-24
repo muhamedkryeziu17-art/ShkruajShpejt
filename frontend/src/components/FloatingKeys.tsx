@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import anime from "animejs/lib/anime.es.js";
+
+type AnimeModule = typeof import("animejs/lib/anime.es.js");
 
 const keys = [
   { value: "A", left: "8%" },
@@ -22,30 +23,40 @@ export function FloatingKeys() {
   useEffect(() => {
     if (!ref.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const height = ref.current.offsetHeight || window.innerHeight;
-    const animation = anime({
-      targets: ref.current.querySelectorAll("[data-floating-key]"),
-      translateY: [-72, height + 72],
-      translateX: [0, 0],
-      rotate: (_el: Element, index: number) => (index % 2 === 0 ? 8 : -8),
-      opacity: [
-        { value: 0, duration: 0 },
-        { value: 0.85, duration: 420 },
-        { value: 0.85, duration: 2200 },
-        { value: 0, duration: 480 }
-      ],
-      scale: [
-        { value: 0.86, duration: 0 },
-        { value: 1, duration: 420 },
-        { value: 0.92, duration: 480 }
-      ],
-      delay: anime.stagger(320),
-      duration: 4200,
-      loop: true,
-      easing: "linear"
+    let cancelled = false;
+    let animation: ReturnType<AnimeModule["default"]> | null = null;
+
+    import("animejs/lib/anime.es.js").then(({ default: anime }) => {
+      if (cancelled || !ref.current) return;
+
+      const height = ref.current.offsetHeight || window.innerHeight;
+      animation = anime({
+        targets: ref.current.querySelectorAll("[data-floating-key]"),
+        translateY: [-72, height + 72],
+        translateX: [0, 0],
+        rotate: (_el: Element, index: number) => (index % 2 === 0 ? 8 : -8),
+        opacity: [
+          { value: 0, duration: 0 },
+          { value: 0.85, duration: 420 },
+          { value: 0.85, duration: 2200 },
+          { value: 0, duration: 480 }
+        ],
+        scale: [
+          { value: 0.86, duration: 0 },
+          { value: 1, duration: 420 },
+          { value: 0.92, duration: 480 }
+        ],
+        delay: anime.stagger(320),
+        duration: 4200,
+        loop: true,
+        easing: "linear"
+      });
     });
 
-    return () => animation.pause();
+    return () => {
+      cancelled = true;
+      animation?.pause();
+    };
   }, []);
 
   return (

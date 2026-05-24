@@ -2,11 +2,11 @@ import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { FeatureGate } from "./components/FeatureGate";
+import { LandingPage } from "./pages/LandingPage";
 
 const AboutPage = lazy(() => import("./pages/AboutPage").then((module) => ({ default: module.AboutPage })));
 const BigramsPage = lazy(() => import("./pages/BigramsPage").then((module) => ({ default: module.BigramsPage })));
 const DashboardPage = lazy(() => import("./pages/DashboardPage").then((module) => ({ default: module.DashboardPage })));
-const LandingPage = lazy(() => import("./pages/LandingPage").then((module) => ({ default: module.LandingPage })));
 const LessonDetailPage = lazy(() => import("./pages/LessonDetailPage").then((module) => ({ default: module.LessonDetailPage })));
 const LessonsPage = lazy(() => import("./pages/LessonsPage").then((module) => ({ default: module.LessonsPage })));
 const LoginPage = lazy(() => import("./pages/LoginPage").then((module) => ({ default: module.LoginPage })));
