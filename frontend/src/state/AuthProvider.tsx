@@ -1,6 +1,12 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { hasSupabaseConfig, supabase } from "../lib/supabase";
+
+const hasSupabaseConfig = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+async function getSupabaseClient() {
+  const module = await import("../lib/supabase");
+  return module.supabase;
+}
 
 type AuthContextValue = {
   session: Session | null;
@@ -19,21 +25,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    let unsubscribe: (() => void) | null = null;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      setSession(data.session);
+    if (!hasSupabaseConfig) {
       setLoading(false);
-    });
+      return () => {
+        active = false;
+      };
+    }
 
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setLoading(false);
-    });
+    getSupabaseClient()
+      .then((supabase) => {
+        if (!active) return;
+
+        supabase.auth.getSession().then(({ data }) => {
+          if (!active) return;
+          setSession(data.session);
+          setLoading(false);
+        });
+
+        const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+          setSession(nextSession);
+          setLoading(false);
+        });
+
+        unsubscribe = () => data.subscription.unsubscribe();
+      })
+      .catch(() => {
+        if (!active) return;
+        setLoading(false);
+      });
 
     return () => {
       active = false;
-      data.subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, []);
 
@@ -42,6 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Konfigurimi i Supabase mungon");
     }
 
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -53,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    const supabase = await getSupabaseClient();
     await supabase.auth.signOut();
   }, []);
 
