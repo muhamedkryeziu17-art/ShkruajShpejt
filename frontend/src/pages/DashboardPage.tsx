@@ -6,7 +6,7 @@ import { Card, SectionHeader } from "../components/Card";
 import { PageFrame } from "../components/PageFrame";
 import { StatCard } from "../components/StatCard";
 import { apiRequest } from "../lib/api";
-import { formatDuration } from "../lib/utils";
+import { formatChartDate, formatDuration } from "../lib/utils";
 import { useAuth } from "../state/AuthProvider";
 
 type Summary = {
@@ -160,9 +160,10 @@ export function DashboardPage() {
             {progress.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={progress}>
-                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickFormatter={(value) => String(value).slice(5)} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickFormatter={formatChartDate} />
                   <YAxis tickLine={false} axisLine={false} width={36} />
                   <Tooltip
+                    labelFormatter={formatChartDate}
                     contentStyle={{
                       borderRadius: 16,
                       border: "1px solid rgba(148,163,184,0.25)",

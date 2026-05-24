@@ -8,7 +8,7 @@ import { Paywall } from "../components/Paywall";
 import { StatCard } from "../components/StatCard";
 import { apiRequest } from "../lib/api";
 import { hasFeature } from "../lib/billingPlans";
-import { formatDuration, toKeyLabel } from "../lib/utils";
+import { formatChartDate, formatDuration, toKeyLabel } from "../lib/utils";
 import { useAuth } from "../state/AuthProvider";
 import { useBilling } from "../state/BillingProvider";
 
@@ -108,9 +108,9 @@ export function StatsPage() {
             {progress.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={progress}>
-                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickFormatter={(value) => String(value).slice(5)} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickFormatter={formatChartDate} />
                   <YAxis tickLine={false} axisLine={false} width={36} />
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip contentStyle={tooltipStyle} labelFormatter={formatChartDate} />
                   <Area type="monotone" dataKey="wpm" name="WPM" stroke="#06b6d4" fill="#06b6d4" fillOpacity={0.16} strokeWidth={3} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -126,9 +126,9 @@ export function StatsPage() {
             {progress.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={progress}>
-                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickFormatter={(value) => String(value).slice(5)} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickFormatter={formatChartDate} />
                   <YAxis tickLine={false} axisLine={false} width={36} />
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip contentStyle={tooltipStyle} labelFormatter={formatChartDate} />
                   <Area type="monotone" dataKey="accuracy" name="Saktesia" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.16} strokeWidth={3} />
                 </AreaChart>
               </ResponsiveContainer>
