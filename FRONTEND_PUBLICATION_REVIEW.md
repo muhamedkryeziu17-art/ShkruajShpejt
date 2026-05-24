@@ -42,7 +42,7 @@ Date: 2026-05-11
 
 ## Problems
 
-- `YOUR_DOMAIN` and `support@YOUR_DOMAIN.com` remain placeholders unless production env vars are set.
+- `YOUR_DOMAIN` remains a domain placeholder in docs/mobile setup; support email is `shkruajshpejt@gmail.com`.
 - There is no dedicated 404 page; unknown routes redirect to the landing page.
 - Live Google login, save result, and stats loading were not verified against deployed backend.
 

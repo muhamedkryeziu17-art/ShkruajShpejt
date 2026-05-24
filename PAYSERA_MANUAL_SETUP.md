@@ -23,7 +23,7 @@ VITE_MANUAL_PAYMENT_PAYEE_NAME=EMRI_YT_OSE_BIZNESI
 VITE_MANUAL_PAYMENT_PAYSERA_EMAIL=EMAILI_YT_PAYSERA
 VITE_MANUAL_PAYMENT_IBAN=IBAN_I_PAYSERA_OSE_BANKES
 VITE_MANUAL_PAYMENT_BANK_NAME=Paysera
-VITE_SUPPORT_EMAIL=EMAILI_YT_SUPPORT
+VITE_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 ```
 
 `VITE_ENABLE_PAYMENTS=false` eshte ne rregull per kete flow, sepse pagesa manuale shfaqet nga `VITE_PAYMENT_PROVIDER=paysera_manual`.
@@ -124,4 +124,3 @@ Pastaj user-i duhet:
 - Nuk ka abonim mujor automatik.
 - Admini duhet te kontrolloj pagesen manualisht.
 - Per launch publik duhen terma, refund policy dhe support email real.
-

@@ -127,7 +127,7 @@ VITE_SUPABASE_URL
 VITE_SUPABASE_ANON_KEY
 VITE_API_BASE_URL=https://YOUR-BACKEND-URL
 VITE_SITE_URL=https://shkruajshpejt.vercel.app
-VITE_SUPPORT_EMAIL
+VITE_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 ```
 
 7. Deploy.
@@ -170,7 +170,7 @@ For free Vercel launch:
 
 ```text
 VITE_SITE_URL=https://shkruajshpejt.vercel.app
-VITE_SUPPORT_EMAIL=your-real-support-email
+VITE_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 ```
 
 Also update mobile env later:

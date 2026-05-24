@@ -40,7 +40,7 @@ Verdict: not ready for public launch until live Supabase, backend hosting, Verce
 6. Add frontend URL to backend `CORS_ALLOWED_ORIGINS`.
 7. Test Google login on the deployed URL.
 8. Test saving a typing result and loading stats with a real logged-in account.
-9. Replace `YOUR_DOMAIN` and `support@YOUR_DOMAIN.com`.
+9. Replace `YOUR_DOMAIN`; support email is set to `shkruajshpejt@gmail.com`.
 10. Rotate secrets that were shared or used during development.
 
 ## Public Access Verdict

@@ -6,7 +6,7 @@ Legal pages are now available in the web app, but they are still drafts and need
 
 - [ ] Replace `YOUR_DOMAIN` with the real Vercel or custom domain.
 - [ ] If using the free Vercel domain, use `shkruajshpejt.vercel.app`.
-- [ ] Replace `support@YOUR_DOMAIN.com` with a real support email.
+- [x] Replace support email with `shkruajshpejt@gmail.com`.
 - [ ] Set frontend env: `VITE_SITE_URL=https://YOUR_DOMAIN.com`
 - [ ] Set mobile env: `EXPO_PUBLIC_SITE_URL=https://YOUR_DOMAIN.com`
 

@@ -80,7 +80,7 @@ VITE_SITE_URL=https://YOUR-VERCEL-APP.vercel.app
 Set the public support email used by legal/contact pages:
 
 ```text
-VITE_SUPPORT_EMAIL=support@YOUR-DOMAIN.com
+VITE_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 ```
 
 Set the backend API to your deployed ASP.NET Core API:

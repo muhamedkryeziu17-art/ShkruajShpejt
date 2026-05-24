@@ -12,8 +12,9 @@ Set these instead of editing many source files:
 
 ```text
 VITE_SITE_URL=https://shkruajshpejt.vercel.app
-VITE_SUPPORT_EMAIL=your-real-support-email
+VITE_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 EXPO_PUBLIC_SITE_URL=https://shkruajshpejt.vercel.app
+EXPO_PUBLIC_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 ```
 
 ## Remaining `YOUR_DOMAIN`
@@ -21,16 +22,16 @@ EXPO_PUBLIC_SITE_URL=https://shkruajshpejt.vercel.app
 These are intentional placeholders until production env/domain is chosen:
 
 - `frontend/src/lib/legal.ts`
-  - Fallback `https://YOUR_DOMAIN.com`
+  - Site fallback uses current browser origin.
   - Replace through `VITE_SITE_URL=https://shkruajshpejt.vercel.app`
-  - Fallback `support@YOUR_DOMAIN.com`
-  - Replace through `VITE_SUPPORT_EMAIL`
+  - Support fallback `shkruajshpejt@gmail.com`
+  - Override through `VITE_SUPPORT_EMAIL`
 
 - `mobile/constants/legal.ts`
   - Fallback `https://YOUR_DOMAIN.com`
   - Replace through `EXPO_PUBLIC_SITE_URL=https://shkruajshpejt.vercel.app`
-  - Fallback `support@YOUR_DOMAIN.com`
-  - Replace before mobile store testing or add `EXPO_PUBLIC_SUPPORT_EMAIL` later.
+  - Support fallback `shkruajshpejt@gmail.com`
+  - Override through `EXPO_PUBLIC_SUPPORT_EMAIL`.
 
 - Documentation files:
   - `LEGAL_TODO.md`
@@ -46,18 +47,11 @@ These are intentional placeholders until production env/domain is chosen:
 
 Docs can keep placeholders, but production env must use real values.
 
-## Remaining `support@YOUR_DOMAIN.com`
-
-Found in:
-
-- `frontend/src/lib/legal.ts`
-- `mobile/constants/legal.ts`
-- legal/deployment docs
-
-For web launch, set:
+## Support Email
 
 ```text
-VITE_SUPPORT_EMAIL=your-real-support-email
+VITE_SUPPORT_EMAIL=shkruajshpejt@gmail.com
+EXPO_PUBLIC_SUPPORT_EMAIL=shkruajshpejt@gmail.com
 ```
 
 ## Remaining `example.com`

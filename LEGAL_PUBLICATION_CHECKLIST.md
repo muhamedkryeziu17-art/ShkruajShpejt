@@ -15,7 +15,7 @@ Existing routes:
 - Replace `YOUR_DOMAIN` with the real Vercel or custom domain.
 - Set `VITE_SITE_URL`.
 - Set `VITE_SUPPORT_EMAIL`.
-- Replace `support@YOUR_DOMAIN.com` with a real support email.
+- Use `shkruajshpejt@gmail.com` as the real support email.
 - Review Privacy Policy before public launch.
 - Review Terms of Service before public launch.
 - Review Refund Policy before enabling payments.

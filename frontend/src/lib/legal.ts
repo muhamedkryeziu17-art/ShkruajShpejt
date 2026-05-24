@@ -1,7 +1,7 @@
 const browserSiteUrl = typeof window === "undefined" ? "" : window.location.origin;
 const siteUrl = (import.meta.env.VITE_SITE_URL || browserSiteUrl).trim().replace(/\/+$/, "");
 
-export const supportEmail = (import.meta.env.VITE_SUPPORT_EMAIL || "muhamedkryeziu02@gmail.com").trim();
+export const supportEmail = (import.meta.env.VITE_SUPPORT_EMAIL || "shkruajshpejt@gmail.com").trim();
 
 export const legalUrls = {
   base: siteUrl,
